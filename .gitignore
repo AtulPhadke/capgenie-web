@@ -75,4 +75,11 @@ cache/
 *.tmp
 *.temp
 
+# Elastic Beanstalk
 .elasticbeanstalk/app_versions/
+
+# Large media files
+*.mov
+*.mp4
+*.avi
+*.mkv
