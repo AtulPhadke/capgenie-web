@@ -1,0 +1,856 @@
+/* Wizard Container */
+.wizard-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Dataset Input */
+.dataset-input-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.input-dataset {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.input-dataset:focus {
+  outline: none;
+  border-color: #66BB6A;
+  box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+}
+
+.error-text {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Progress Bar */
+.progress-container {
+  margin: 2rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #66BB6A;
+  width: 16.67%; /* Start at step 1 */
+  transition: width 0.3s ease;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.step {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  flex: 1;
+  position: relative;
+  font-weight: 500;
+}
+
+.step.active {
+  color: #66BB6A;
+  font-weight: 600;
+}
+
+.step.completed {
+  color: #66BB6A;
+}
+
+/* Wizard Steps */
+.wizard-step {
+  display: none;
+  animation: fadeIn 0.3s ease;
+  min-height: 400px;
+}
+
+.wizard-step.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wizard-step h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.step-description {
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Step Options */
+.step-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.step-option {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.step-option .threshold-controls {
+  cursor: default;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  pointer-events: auto;
+}
+
+.step-option .threshold-controls * {
+  pointer-events: auto;
+}
+
+/* Enrichment File Selector */
+.enrichment-file-selector {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.enrichment-file-selector label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.file-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-select:hover {
+  border-color: #66BB6A;
+}
+
+.file-select:focus {
+  outline: none;
+  border-color: #66BB6A;
+  box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+}
+
+.file-select option {
+  padding: 0.5rem;
+}
+
+.step-option:hover {
+  border-color: #87CEEB;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(135, 206, 235, 0.2);
+}
+
+.step-option.selected {
+  border-color: #4682B4;
+  background: rgba(70, 130, 180, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(70, 130, 180, 0.3);
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.option-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.option-text h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.option-text p {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Info Buttons */
+.info-btn {
+  background: #707070;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.info-btn:hover {
+  background: #999;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* File Input Styling */
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: inline-block;
+  background: #f8f8f8;
+  border: 2px dashed #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  color: #666666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.file-label:hover {
+  border-color: #66BB6A;
+  background: #f0f8f0;
+}
+
+.file-label.has-file {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.05);
+  color: #28a745;
+}
+
+/* Threshold Controls */
+.threshold-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: flex-start;
+  width: 100%;
+  padding-left: 1rem;
+}
+
+.threshold-controls label {
+  font-weight: 500;
+  color: #333;
+}
+
+.threshold-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.threshold-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #333;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.threshold-btn:hover {
+  background: #66BB6A;
+  border-color: #66BB6A;
+  color: #ffffff;
+}
+
+.threshold-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#threshold-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+  color: #333;
+}
+
+/* Directory Structure Panel */
+.dir-structure-panel {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dir-structure-panel h4 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.dir-tree {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.dir-tree ul {
+  list-style: none;
+  margin: 0 0 0 1.2em;
+  padding: 0;
+}
+
+.dir-tree li {
+  margin: 0.2em 0;
+}
+
+.file-link {
+  cursor: pointer;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.file-link:hover {
+  background-color: #f0f8f0;
+}
+
+.file-link.selected {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+/* Navigation */
+.wizard-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.nav-btn, .finish-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.nav-btn:hover {
+  background: #e9ecef;
+  border-color: #ccc;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.finish-btn {
+  background: #66BB6A;
+  color: white;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+}
+
+.finish-btn:hover {
+  background: #5da85f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+}
+
+/* Progress Section */
+.progress-section {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.progress-section h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.progress-section .progress-bar {
+  margin: 1.5rem 0;
+}
+
+#progress-text {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.info-modal {
+  max-width: 1000px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-footer {
+  padding: 1rem 2rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #66BB6A;
+  color: white;
+}
+
+.modal-btn:hover {
+  background: #5da85f;
+  transform: translateY(-1px);
+}
+
+/* Info Section Styles */
+.info-section {
+  margin-bottom: 2rem;
+}
+
+.info-section h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* CSV Table Styles */
+.csv-example {
+  margin: 1rem 0;
+}
+
+.csv-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.csv-table th,
+.csv-table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.csv-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.csv-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Process Flow Diagram */
+.modern-diagram {
+  margin: 1.5rem 0;
+}
+
+.diagram-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.diagram-step-modern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  min-width: 100px;
+}
+
+.step-icon {
+  font-size: 2rem;
+}
+
+.step-label {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  font-weight: 500;
+}
+
+.diagram-arrow-modern {
+  font-size: 1.5rem;
+  color: #66BB6A;
+  font-weight: bold;
+}
+
+/* Sequence Display */
+.sequence-display {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.sequence-line {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  word-break: break-all;
+}
+
+.flank-upstream {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.target-sequence {
+  background: #fff3e0;
+  color: #f57c00;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin: 0 0.5rem;
+}
+
+.flank-downstream {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.sequence-labels {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Quality Scores Table */
+.quality-table {
+  margin: 1rem 0;
+}
+
+.quality-scores {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quality-scores th,
+.quality-scores td {
+  padding: 0.8rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.quality-scores th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Threshold Recommendations */
+.threshold-recommendations {
+  margin: 1rem 0;
+}
+
+.recommendation {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-left: 4px solid #66BB6A;
+  margin-bottom: 0.5rem;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Reference Sequence Styles */
+.refseq-diagram {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.refseq-sequence {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.refseq-highlight {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin-right: 1rem;
+}
+
+.refseq-text {
+  color: #666;
+  font-weight: 500;
+}
+
+.refseq-description p {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+/* Motif Analysis Styles */
+.motif-explanation ul,
+.motif-output ul {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.motif-explanation li,
+.motif-output li {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .wizard-container {
+    padding: 1rem;
+  }
+  
+  .progress-steps {
+    font-size: 0.8rem;
+  }
+  
+  .step-options {
+    max-width: 100%;
+  }
+  
+  .option-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .info-btn {
+    position: static;
+    transform: none;
+    margin-top: 1rem;
+  }
+  
+  .info-btn:hover {
+    transform: scale(1.1);
+  }
+  
+  .wizard-navigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-btn, .finish-btn {
+    width: 100%;
+  }
+  
+  .diagram-container {
+    flex-direction: column;
+  }
+  
+  .diagram-arrow-modern {
+    transform: rotate(90deg);
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+}
+
+/* Animation for step transitions */
+.wizard-step.fade-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.wizard-step.fade-out {
+  animation: slideOut 0.3s ease-in;
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+} 

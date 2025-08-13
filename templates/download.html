@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download capgenie Desktop</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='imgs/lamp.png') }}" alt="capgenie Logo" style="width:56px;height:56px;">
+        <h1>capgenie</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        
+        <a href="{{ url_for('new_dataset') }}">New Dataset</a>
+        <a href="{{ url_for('view_datasets') }}">View Previous Datasets</a>
+        <a href="{{ url_for('documentation') }}">Documentation</a>
+        <a href="{{ url_for('download') }}" class="active">Download</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+      </nav>
+    </div>
+  </header>
+  <main class="main-content">
+    <div class="card" style="max-width: 500px; margin: 3rem auto; text-align: center;">
+      <h2>Download capgenie Desktop</h2>
+      <p style="margin: 1.5rem 0; color: #666; font-size: 1.1rem;">
+        Get the capgenie desktop app for macOS. Analyze your sequencing data offline with a fast, modern interface.
+      </p>
+      <a href="/static/capgenie-desktop.dmg" class="btn" style="font-size: 1.1rem; padding: 1rem 2.5rem; margin-bottom: 1.2rem; display: inline-block;">
+        Download for macOS (.dmg)
+      </a>
+      <br>
+      <a href="https://github.com/yourusername/capgenie" target="_blank" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2.5rem; display: inline-block; margin-top: 0.5rem;">
+        <img src="{{ url_for('static', filename='imgs/github.png') }}" alt="GitHub" style="height: 1.2em; vertical-align: middle; margin-right: 0.5em;">View on GitHub
+      </a>
+      <div style="margin-top: 2.5rem; color: #888; font-size: 0.98rem; text-align: left;">
+        <strong>System Requirements:</strong>
+        <ul style="margin: 0.5rem 0 0 1.5rem;">
+          <li>macOS 11.0 or later (Apple Silicon or Intel)</li>
+          <li>100MB free disk space</li>
+          <li>Internet connection for updates (optional)</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2024 capgenie. Advanced DNA Analysis Platform.</p>
+  </footer>
+</body>
+</html> 

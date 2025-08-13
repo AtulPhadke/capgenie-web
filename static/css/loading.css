@@ -1,0 +1,29 @@
+.main-content {
+    background: rgba(251, 251, 251, 1);
+    width:100%;
+    align-items: center;
+    justify-content: center;
+}
+.center-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+#dna_moving {
+    transform: translate(-50%, -50%);
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    clip-path: inset(1px 1px);
+    rotate: 35deg;
+}
+
+#running_text {
+    font-size: 28px;
+    font-family: Poppins-Medium;
+}
+#progress_text {
+    font-size: 18px;
+    font-family: Poppins-Light;
+} 

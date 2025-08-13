@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Dataset - CapGenie</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/wizard.css') }}">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='imgs/lamp.png') }}" alt="capgenie Logo" style="width:56px;height:56px;">
+        <h1>capgenie</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        
+        <a href="{{ url_for('new_dataset') }}" class="active">New Dataset</a>
+        <a href="{{ url_for('view_datasets') }}">View Previous Datasets</a>
+        <a href="{{ url_for('documentation') }}">Documentation</a>
+        <a href="{{ url_for('download') }}">Download</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="wizard-container">
+      <!-- Dataset Name Input -->
+      <div class="dataset-input-container">
+        <input type="text" class="input-dataset" id="dataset-name" placeholder="Name your dataset...">
+        <p id="error-text" class="error-text" style="display: none;">Please give your dataset a name.</p>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-steps">
+          <div class="step active" data-step="1">1. Folder Selection</div>
+          <div class="step" data-step="2">2. Analysis Type</div>
+          <div class="step" data-step="3">3. Enrichment</div>
+          <div class="step" data-step="4">4. Denoise</div>
+          <div class="step" data-step="5">5. Graphs</div>
+          <div class="step" data-step="6">6. Motifs</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Folder Selection -->
+      <div class="wizard-step active" id="step-1">
+        <h2>Select your dataset folder</h2>
+        <p class="step-description">Choose the folder containing your FASTQ files for analysis.</p>
+        <div class="step-options">
+          <div class="step-option" id="folder-selection">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/folder_icon.png') }}" alt="Folder" class="option-icon">
+              <div class="option-text">
+                <h3>Select Dataset Folder</h3>
+                <p>Browse and select your dataset folder</p>
+              </div>
+            </div>
+            <input type="file" id="dataset-folder" webkitdirectory directory multiple style="display: none;">
+          </div>
+        </div>
+        <!-- Directory Structure Panel -->
+        <div class="dir-structure-panel" id="dir-structure-panel" style="display: none;">
+          <h4>Directory Structure</h4>
+          <div class="dir-tree" id="dir-tree"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Analysis Type -->
+      <div class="wizard-step" id="step-2">
+        <h2>What type of analysis would you like to perform?</h2>
+        <div class="step-options">
+          <div class="step-option" id="barcode-option">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/dna.png') }}" alt="Barcode" class="option-icon">
+              <div class="option-text">
+                <h3>Barcode Analysis</h3>
+                <p>Evaluate pooled vector barcodes using a CSV file</p>
+              </div>
+              <button class="info-btn" id="barcode-info-btn">ⓘ</button>
+            </div>
+          </div>
+          <div class="step-option" id="selection-option">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/genetic.png') }}" alt="Selection" class="option-icon">
+              <div class="option-text">
+                <h3>Selection Analysis</h3>
+                <p>Evaluate capsid library selections in FASTQ files</p>
+              </div>
+              <button class="info-btn" id="selection-info-btn">ⓘ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Enrichment -->
+      <div class="wizard-step" id="step-3">
+        <h2>Would you like to calculate enrichment values?</h2>
+        <p class="step-description">Based on an input library, we calculate how a barcode grows.</p>
+        <div class="step-options">
+          <div class="step-option" id="enrichment-yes">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/enrichment.png') }}" alt="Enrichment" class="option-icon">
+              <div class="option-text">
+                <h3>Yes, calculate enrichment</h3>
+                <p>Select a FASTQ file from your dataset</p>
+              </div>
+            </div>
+            <!-- File selection dropdown (will be populated by JavaScript) -->
+            <div class="enrichment-file-selector" id="enrichment-file-selector" style="display: none;">
+              <label>Select enrichment file:</label>
+              <select id="enrichment-file-select" class="file-select">
+                <option value="">Choose a FASTQ file...</option>
+              </select>
+            </div>
+          </div>
+          <div class="step-option" id="enrichment-no">
+            <div class="option-content">
+              <div class="option-text">
+                <h3>No, skip enrichment</h3>
+                <p>Continue without enrichment calculation</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: Denoise -->
+      <div class="wizard-step" id="step-4">
+        <h2>Would you like to denoise the FASTQ files?</h2>
+        <p class="step-description">Remove reads below a quality threshold for more accurate findings.</p>
+        <div class="step-options">
+          <div class="step-option" id="denoise-yes">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/music.png') }}" alt="Denoise" class="option-icon">
+              <div class="option-text">
+                <h3>Yes, denoise files</h3>
+                <p>Set quality threshold for filtering</p>
+              </div>
+              <button class="info-btn" id="denoise-info-btn">ⓘ</button>
+            </div>
+            <div class="threshold-controls">
+              <label>Quality Threshold:</label>
+              <div class="threshold-counter">
+                <button class="threshold-btn" onclick="changeThreshold(-1)">−</button>
+                <span id="threshold-value">15</span>
+                <button class="threshold-btn" onclick="changeThreshold(1)">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="step-option" id="denoise-no">
+            <div class="option-content">
+              <div class="option-text">
+                <h3>No, skip denoising</h3>
+                <p>Process files without quality filtering</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Graphs -->
+      <div class="wizard-step" id="step-5">
+        <h2>Would you like to create visualization graphs?</h2>
+        <p class="step-description">Generate interactive graphs for easy data visualization.</p>
+        <div class="step-options">
+          <div class="step-option" id="graphs-yes">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/graph.png') }}" alt="Graphs" class="option-icon">
+              <div class="option-text">
+                <h3>Yes, create graphs</h3>
+                <p>Generate interactive visualizations</p>
+              </div>
+            </div>
+          </div>
+          <div class="step-option" id="graphs-no">
+            <div class="option-content">
+              <div class="option-text">
+                <h3>No, skip graphs</h3>
+                <p>Process without visualization</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6: Motifs -->
+      <div class="wizard-step" id="step-6">
+        <h2>Would you like to calculate motifs?</h2>
+        <p class="step-description">Generate motif analysis based on your data.</p>
+        <div class="step-options">
+          <div class="step-option" id="motif-yes">
+            <div class="option-content">
+              <img src="{{ url_for('static', filename='imgs/helix.png') }}" alt="Motifs" class="option-icon">
+              <div class="option-text">
+                <h3>Yes, calculate motifs</h3>
+                <p>Generate motif analysis from your data</p>
+              </div>
+              <button class="info-btn" id="motif-info-btn">ⓘ</button>
+            </div>
+          </div>
+          <div class="step-option" id="motif-no">
+            <div class="option-content">
+              <div class="option-text">
+                <h3>No, skip motifs</h3>
+                <p>Continue without motif analysis</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="wizard-navigation">
+        <button id="prev-btn" class="nav-btn" style="display: none;">Previous</button>
+        <button id="next-btn" class="nav-btn">Next</button>
+        <button id="finish-btn" class="finish-btn" style="display: none;">Start Analysis</button>
+      </div>
+    </div>
+
+    <!-- Progress Section (hidden by default) -->
+    <div class="progress-section" id="progress-section" style="display: none;">
+      <div class="card">
+        <h2>Processing Dataset</h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="processing-progress"></div>
+        </div>
+        <p id="progress-text">Initializing...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- CSV File Input for Barcode Analysis (hidden) -->
+  <input type="file" id="barcode-csv-file" accept=".csv" style="display: none;">
+
+  <!-- Barcode Info Modal -->
+  <div id="barcode-info-modal" class="modal">
+    <div class="modal-content info-modal">
+      <div class="modal-header">
+        <h3>Barcode Analysis</h3>
+        <button id="barcode-info-modal-close" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="barcode-info-content">
+          <div class="info-section">
+            <h4>CSV File Format</h4>
+            <div class="csv-example">
+              <table class="csv-table">
+                <thead>
+                  <tr>
+                    <th>Peptide</th>
+                    <th>Sequence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>AAV9_001</td>
+                    <td>ATGCGTCGATCG</td>
+                  </tr>
+                  <tr>
+                    <td>AAV9_002</td>
+                    <td>GCTAGCTAGCTA</td>
+                  </tr>
+                  <tr>
+                    <td>AAV9_003</td>
+                    <td>TCGATCGATCGA</td>
+                  </tr>
+                  <tr>
+                    <td>...</td>
+                    <td>...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h4>Process Flow</h4>
+            <div class="modern-diagram">
+              <div class="diagram-container">
+                <div class="diagram-step-modern">
+                  <div class="step-icon">📄</div>
+                  <div class="step-label">Barcode key file</div>
+                </div>
+                <div class="diagram-arrow-modern">→</div>
+                <div class="diagram-step-modern">
+                  <div class="step-icon">🔍</div>
+                  <div class="step-label">Search FASTQ</div>
+                </div>
+                <div class="diagram-arrow-modern">→</div>
+                <div class="diagram-step-modern">
+                  <div class="step-icon">📊</div>
+                  <div class="step-label">Count Matches</div>
+                </div>
+                <div class="diagram-arrow-modern">→</div>
+                <div class="diagram-step-modern">
+                  <div class="step-icon">📈</div>
+                  <div class="step-label">Report Results</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="barcode-info-modal-close-btn" class="modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selection Info Modal -->
+  <div id="selection-info-modal" class="modal">
+    <div class="modal-content info-modal">
+      <div class="modal-header">
+        <h3>Selection Analysis</h3>
+        <button id="selection-info-modal-close" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="selection-info-content">
+          <div class="info-section">
+            <h4>Flanking Sequence Search</h4>
+            <div class="interactive-diagram">
+              <div class="sequence-display">
+                <div class="sequence-line">
+                  <span class="flank-upstream">ATGCGTCGATCG</span>
+                  <span class="target-sequence">GCTAGCTAGCTAGCTA</span>
+                  <span class="flank-downstream">TCGATCGATCGA</span>
+                </div>
+                <div class="sequence-labels">
+                  <span class="label-upstream">Upstream Flank</span>
+                  <span class="label-target">Target Sequence</span>
+                  <span class="label-downstream">Downstream Flank</span>
+                </div>
+              </div>
+              <div class="diagram-explanation">
+                <p>The algorithm searches for sequences between two known flanking regions. When both flanks are found, the sequence between them is extracted and analyzed.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h4>Reference Sequence Search</h4>
+            <div class="refseq-explanation">
+              <div class="refseq-diagram">
+                <div class="refseq-sequence">
+                  <span class="refseq-highlight">ATGCGTCGATCG</span>
+                  <span class="refseq-text">Reference Sequence</span>
+                </div>
+                <div class="refseq-description">
+                  <p>Instead of using flanking sequences, you can provide a single reference sequence. The algorithm will search for this exact sequence in your FASTQ files and extract surrounding regions for analysis.</p>
+                  <p><strong>Use case:</strong> When you know the exact sequence you're looking for and want to analyze variations around it.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="selection-info-modal-close-btn" class="modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Denoise Info Modal -->
+  <div id="denoise-info-modal" class="modal">
+    <div class="modal-content info-modal">
+      <div class="modal-header">
+        <h3>Quality Score Filtering</h3>
+        <button id="denoise-info-modal-close" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="denoise-info-content">
+          <div class="info-section">
+            <h4>Illumina Quality Scores</h4>
+            <div class="quality-explanation">
+              <p>Illumina sequencing uses Phred quality scores (Q) to indicate the probability that a base call is incorrect:</p>
+              <div class="quality-table">
+                <table class="quality-scores">
+                  <thead>
+                    <tr>
+                      <th>Q Score</th>
+                      <th>Error Rate</th>
+                      <th>Accuracy</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>10</td>
+                      <td>1 in 10</td>
+                      <td>90%</td>
+                      <td>Poor quality</td>
+                    </tr>
+                    <tr>
+                      <td>20</td>
+                      <td>1 in 100</td>
+                      <td>99%</td>
+                      <td>Good quality</td>
+                    </tr>
+                    <tr>
+                      <td>30</td>
+                      <td>1 in 1000</td>
+                      <td>99.9%</td>
+                      <td>High quality</td>
+                    </tr>
+                    <tr>
+                      <td>40</td>
+                      <td>1 in 10000</td>
+                      <td>99.99%</td>
+                      <td>Excellent quality</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h4>Recommended Thresholds</h4>
+            <div class="threshold-recommendations">
+              <div class="recommendation">
+                <strong>Q ≥ 15:</strong> Removes very poor quality reads, keeps most data
+              </div>
+              <div class="recommendation">
+                <strong>Q ≥ 20:</strong> Standard filtering, good balance of quality and data retention
+              </div>
+              <div class="recommendation">
+                <strong>Q ≥ 30:</strong> High-quality filtering, may lose some data but ensures accuracy
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="denoise-info-modal-close-btn" class="modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Motif Info Modal -->
+  <div id="motif-info-modal" class="modal">
+    <div class="modal-content info-modal">
+      <div class="modal-header">
+        <h3>Motif Analysis</h3>
+        <button id="motif-info-modal-close" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="motif-info-content">
+          <div class="info-section">
+            <h4>What is Motif Analysis?</h4>
+            <div class="motif-explanation">
+              <p>Motif analysis identifies common patterns in your sequence data that may represent functional domains or structural elements.</p>
+              <p>This analysis examines your CSV file data to find recurring amino acid patterns that could indicate:</p>
+              <ul>
+                <li>Functional protein domains</li>
+                <li>Structural motifs</li>
+                <li>Conserved regions across samples</li>
+                <li>Potential binding sites</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h4>Input Requirements</h4>
+            <div class="motif-requirements">
+              <p><strong>CSV File Format:</strong> Your CSV file should contain at least two columns:</p>
+              <div class="csv-example">
+                <table class="csv-table">
+                  <thead>
+                    <tr>
+                      <th>Column 1 (Protein)</th>
+                      <th>Column 2 (Sequence)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>AAV9_001</td>
+                      <td>MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG</td>
+                    </tr>
+                    <tr>
+                      <td>AAV9_002</td>
+                      <td>MKTVRQERLKSIVRILERSKEPVSGAQLAEELSVSRQVIVQDIAYLRSLGYNIVATPRGYVLAGG</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h4>Output</h4>
+            <div class="motif-output">
+              <p>Motif analysis generates:</p>
+              <ul>
+                <li><strong>Motif Logo:</strong> Visual representation of conserved amino acid patterns</li>
+                <li><strong>Motif List:</strong> Detailed list of identified motifs with frequency counts</li>
+                <li><strong>Statistical Analysis:</strong> Information content and significance scores</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="motif-info-modal-close-btn" class="modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/new_dataset.js') }}"></script>
+</body>
+</html> 

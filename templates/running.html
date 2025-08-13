@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processing Dataset - CapGenie</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/loading.css">
+  <style>
+    .processing-container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .dna-animation {
+      width: 200px;
+      height: 200px;
+      margin: 2rem auto;
+      position: relative;
+    }
+    
+    .dna-animation video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .progress-container {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+    
+    .status-text {
+      font-size: 1.2rem;
+      color: #333;
+      margin: 1rem 0;
+    }
+    
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+    
+    .step {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: 1rem;
+      margin: 0.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .step.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .step.completed {
+      background: #28a745;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="/static/imgs/lamp.png" alt="CapGenie Logo">
+        <h1>CapGenie</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        
+        <a href="{{ url_for('new_dataset') }}">New Dataset</a>
+        <a href="{{ url_for('view_datasets') }}">View Previous Datasets</a>
+        <a href="{{ url_for('documentation') }}">Documentation</a>
+        <a href="{{ url_for('download') }}">Download</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="processing-container">
+      <div class="card">
+        <h2 style="margin-bottom: 2rem; color: #2c3e50;">Processing Your Dataset</h2>
+        
+        <!-- DNA Animation -->
+        <div class="dna-animation">
+          <video autoplay loop muted>
+            <source src="/static/looped_dna.webm" type="video/webm">
+            <source src="/static/smoke_rotated.webm" type="video/webm">
+          </video>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-container">
+          <h3 id="running_text">Processing Dataset...</h3>
+          <p id="progress_text" class="status-text">Initializing analysis...</p>
+          
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          
+          <!-- File Progress -->
+          <div id="file-progress" style="margin: 1rem 0; display: none;">
+            <p style="font-size: 0.9rem; color: #666;">
+              <span id="current-file">Processing files...</span>
+              <span id="file-count" style="float: right;"></span>
+            </p>
+          </div>
+          
+          <div class="steps">
+            <div class="step" id="step-upload">
+              <h4>Upload</h4>
+              <p>Files uploaded</p>
+            </div>
+            <div class="step" id="step-process">
+              <h4>Process</h4>
+              <p>Analyzing data</p>
+            </div>
+            <div class="step" id="step-visualize">
+              <h4>Visualize</h4>
+              <p>Creating charts</p>
+            </div>
+            <div class="step" id="step-complete">
+              <h4>Complete</h4>
+              <p>Ready to view</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Output -->
+        <div class="card">
+          <h3>CapGenie Output</h3>
+          <div id="output-container" style="
+            background: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 6px; 
+            padding: 1rem; 
+            max-height: 300px; 
+            overflow-y: auto; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+          ">
+            <div id="output-content">Waiting for output...</div>
+          </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div class="card">
+          <h3>What's happening?</h3>
+          <ul style="text-align: left; list-style: none; padding: 0;">
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #28a745;">✓</span> Dataset uploaded successfully
+            </li>
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #667eea;">⟳</span> <span id="current-step">Processing sequencing data...</span>
+            </li>
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+              <span style="color: #ccc;">○</span> Generating visualizations
+            </li>
+            <li style="padding: 0.5rem 0;">
+              <span style="color: #ccc;">○</span> Finalizing results
+            </li>
+          </ul>
+        </div>
+
+        <!-- Estimated Time -->
+        <div class="card">
+          <h3>Estimated Time Remaining</h3>
+          <p id="time-remaining" style="font-size: 1.5rem; font-weight: 600; color: #667eea;">2-3 minutes</p>
+          <p style="color: #666; font-size: 0.9rem;">This may vary depending on dataset size and complexity</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/js/running.js"></script>
+</body>
+</html> 

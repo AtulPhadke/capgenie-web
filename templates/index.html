@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capgenie - Advanced DNA Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <canvas class="dna-wave-bg" id="dnaWaveBg"></canvas>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='imgs/lamp.png') }}" alt="capgenie Logo" style="width:56px;height:56px;">
+                <h1>capgenie</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="{{ url_for('index') }}" class="active">Home</a>
+
+                <a href="{{ url_for('new_dataset') }}">New Dataset</a>
+                <a href="{{ url_for('view_datasets') }}">View Previous Datasets</a>
+                <a href="{{ url_for('documentation') }}">Documentation</a>
+                <a href="{{ url_for('download') }}">Download</a>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+      <section class="hero">
+        <canvas id="seqOutputBg" class="seq-output-bg"></canvas>
+        <div class="hero-overlay"></div>
+        <h2 id="hero-headline" class="hero-animate">Analyze NGS data in seconds.</h2>
+        <p>Capgenie provides cutting-edge tools for NGS analysis, enabling researchers to unlock the secrets of genetic data with precision and efficiency.</p>
+        <a href="{{ url_for('new_dataset') }}" class="cta-button">Get Started</a>
+      </section>
+      <div class="scroll-layout">
+        <div class="scroll-sections">
+          <section class="scroll-section" data-image="seq_analysis.png">
+            <div class="section-content">
+              <h3>Sequence Analysis</h3>
+              <p>Advanced algorithms for DNA sequence processing and analysis, providing insights into genetic patterns and variations.</p>
+            </div>
+          </section>
+          <section class="scroll-section" data-image="data_viz.png">
+            <div class="section-content">
+              <h3>Data Visualization</h3>
+              <p>Interactive charts and visualizations to help you understand complex genetic data and identify meaningful patterns.</p>
+            </div>
+          </section>
+          <section class="scroll-section" data-image="capgenie_3.png">
+            <div class="section-content">
+              <h3>Research Tools</h3>
+              <p>Comprehensive suite of tools designed specifically for genetic research and bioinformatics applications.</p>
+            </div>
+          </section>
+        </div>
+        <div class="sticky-image">
+          <img id="section-image" src="/static/capgenie_3.png" alt="Section Image" style="display:block;">
+          <video id="section-video-seq" src="{{ url_for('static', filename='looped_dna.webm') }}" loop autoplay muted playsinline style="display:none; max-width:100%; max-height:100%; transform: rotate(45deg);"></video>
+          <video id="section-video-dataviz" src="{{ url_for('static', filename='capgenie_demo.mov') }}" loop autoplay muted playsinline style="display:none; max-width:100%; max-height:100%;"></video>
+        </div>
+      </div>
+
+      <!-- Quick Start Section (full width, not in scroll-layout) -->
+      <section class="quick-start-section">
+        <h3>Quick Start</h3>
+        <p>Upload your DNA sequence data and let CapGenie's advanced algorithms analyze your genetic information. Our platform supports multiple file formats and provides detailed insights into your data.</p>
+        <div class="code-block">
+          <code># Upload your FASTQ file<br>
+          # Select analysis parameters<br>
+          # Get results in minutes</code>
+        </div>
+      </section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Capgenie</h4>
+                <p>Open source toolkit for NGS analysis</p>
+                <p>Version 1.0.0</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <div class="social-links">
+                    <a href="https://linkedin.com/in/atulphadke" target="_blank" class="social-link">
+                        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                    </a>
+                    <a href="https://github.com/atulphadke" target="_blank" class="social-link">
+                        <img src="{{ url_for('static', filename='imgs/github.png') }}" alt="GitHub" class="social-icon">
+                        GitHub
+                    </a>
+                    <a href="https://instagram.com/atulphadke" target="_blank" class="social-link">
+                        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        Instagram
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Institutional Support</h4>
+                <div class="institutional-logos">
+                    <img src="{{ url_for('static', filename='imgs/mghri.gif') }}" alt="MGH Research Institute" class="inst-logo">
+                    <img src="{{ url_for('static', filename='imgs/hmsLogo.png') }}" alt="Harvard Medical School" class="inst-logo">
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Capgenie. Open source toolkit for NGS analysis. By Atul Phadke.</p>
+        </div>
+    </footer>
+    <script>
+    // DNA/Sequencing Double Helix Animation (SMOOTH)
+    const canvas = document.getElementById('dnaWaveBg');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      // Responsive resize
+      window.addEventListener('resize', () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      });
+
+      // DNA base colors
+      const bases = [
+        { letter: 'A', color: '#a3cef1' },
+        { letter: 'T', color: '#f9dcc4' },
+        { letter: 'C', color: '#b6e2d3' },
+        { letter: 'G', color: '#f7b7a3' }
+      ];
+
+      // Parameters
+      const numHelices = 2;
+      const lettersPerHelix = 40;
+      const waveAmplitude = 70;
+      const helixSpacing = height / (numHelices + 1);
+      const letterFont = '900 1.5rem Inter, Arial, sans-serif';
+      const speed = 0.02; // much slower
+      const helixOffset = Math.PI; // 180° offset for double helix
+      const basePairSpacing = 18; // px between paired bases
+
+      function draw(time) {
+        ctx.clearRect(0, 0, width, height);
+        ctx.font = letterFont;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let h = 0; h < numHelices; h++) {
+          const yBase = helixSpacing * (h + 1);
+          const phase = (h % 2 === 0 ? 1 : -1) * time * 0.0005 + h * 0.7;
+          const spacing = width / (lettersPerHelix - 2);
+          const totalWidth = width + spacing * 2;
+          const offset = (time * speed) % totalWidth;
+          for (let i = 0; i < lettersPerHelix; i++) {
+            let x = i * spacing - offset;
+            if (x < -spacing) x += totalWidth;
+            // First strand
+            const y1 = yBase + Math.sin(i / 2 + phase) * waveAmplitude;
+            const base1 = bases[(i + h) % 4];
+            ctx.globalAlpha = 0.85;
+            ctx.fillStyle = base1.color;
+            ctx.font = letterFont;
+            ctx.fillText(base1.letter, x, y1);
+
+            // Second strand (double helix, offset by pi, paired base)
+            const y2 = yBase + Math.sin(i / 2 + phase + helixOffset) * waveAmplitude;
+            // Pairing: A<->T, C<->G
+            let pairIdx = 0;
+            if (base1.letter === 'A') pairIdx = 1;
+            else if (base1.letter === 'T') pairIdx = 0;
+            else if (base1.letter === 'C') pairIdx = 3;
+            else if (base1.letter === 'G') pairIdx = 2;
+            const base2 = bases[pairIdx];
+            ctx.globalAlpha = 0.7;
+            ctx.fillStyle = base2.color;
+            ctx.font = letterFont;
+            ctx.fillText(base2.letter, x, y2);
+
+            // Optional: draw a faint line between the paired bases
+            ctx.globalAlpha = 0.13;
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(x, y1);
+            ctx.lineTo(x, y2);
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      requestAnimationFrame(draw);
+    }
+    </script>
+
+    <script>
+    // Sequencing Output Animation in Hero (less likely in text region)
+    const seqCanvas = document.getElementById('seqOutputBg');
+    if (seqCanvas) {
+      let width = seqCanvas.offsetWidth;
+      let height = seqCanvas.offsetHeight;
+      seqCanvas.width = width;
+      seqCanvas.height = height;
+      const ctx = seqCanvas.getContext('2d');
+
+      // Responsive resize
+      function resizeSeqCanvas() {
+        width = seqCanvas.offsetWidth;
+        height = seqCanvas.offsetHeight;
+        seqCanvas.width = width;
+        seqCanvas.height = height;
+      }
+      window.addEventListener('resize', resizeSeqCanvas);
+
+      // Colors for reads
+      const readColors = [
+        '#6ec1e4', '#b6e2d3', '#f7b7a3', '#f9dcc4', '#a3cef1', '#bbded6', '#f5e6ca', '#f7b7a3'
+      ];
+      const bases = ['A', 'T', 'C', 'G'];
+
+      // Read objects
+      const numReads = 15;
+      const reads = [];
+      // LANE SYSTEM: Divide vertical space into lanes, assign 1 read per lane
+      const minY = 32;
+      const maxY = height - 32;
+      const laneCount = numReads;
+      const laneHeight = (maxY - minY) / laneCount;
+      for (let i = 0; i < numReads; i++) {
+        // Spread lanes to avoid overlap, add small jitter for natural look
+        let y = minY + i * laneHeight + (Math.random() - 0.5) * laneHeight * 0.3;
+        const speed = 0.7 + Math.random() * 0.7;
+        const color = readColors[i % readColors.length];
+        const baseString = randomBaseString();
+        reads.push({
+          y,
+          speed,
+          color,
+          baseString,
+          baseColors: randomBaseColors(baseString.length),
+          x: -Math.random() * width,
+          lane: i
+        });
+      }
+
+      function randomBaseString() {
+        return Array.from({length: 7 + Math.floor(Math.random()*24)}, () => bases[Math.floor(Math.random()*4)]).join('');
+      }
+      function randomBaseColors(len) {
+        len = len || 18;
+        // 20% green, 10% red, 70% default
+        return Array.from({length: len}, () => {
+          const r = Math.random();
+          if (r < 0.1) return 'red';
+          if (r < 0.3) return 'green';
+          return null;
+        });
+      }
+
+      function drawSeqOutput(time) {
+        ctx.clearRect(0, 0, width, height);
+        for (const read of reads) {
+          // Animate
+          read.x += read.speed;
+          if (read.x > width + 60) {
+            read.x = -180 - Math.random()*100;
+            // Re-roll y in the same lane, with new jitter
+            const minY = 32;
+            const maxY = height - 32;
+            const laneCount = numReads;
+            const laneHeight = (maxY - minY) / laneCount;
+            read.y = minY + read.lane * laneHeight + (Math.random() - 0.5) * laneHeight * 0.3;
+            read.baseString = randomBaseString();
+            read.baseColors = randomBaseColors(read.baseString.length);
+          }
+          // Draw bar and bases
+          ctx.font = 'bold 1.1rem Inter, Arial, sans-serif';
+          const textWidth = ctx.measureText(read.baseString).width;
+          const barWidth = textWidth + 32;
+          const barX = read.x + 90 - barWidth/2;
+          ctx.globalAlpha = 0.18 + 0.22 * Math.abs(Math.sin((read.x/width)*Math.PI));
+          ctx.fillStyle = read.color;
+          ctx.fillRect(barX, read.y-12, barWidth, 24);
+          // Draw bases centered
+          ctx.globalAlpha = 0.7;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'middle';
+          let xCursor = barX + 16;
+          for (let i = 0; i < read.baseString.length; i++) {
+            const letter = read.baseString[i];
+            const color = read.baseColors[i] || '#222';
+            ctx.fillStyle = color === 'green' ? '#2ecc40' : color === 'red' ? '#e74c3c' : '#222';
+            ctx.fillText(letter, xCursor, read.y);
+            xCursor += ctx.measureText(letter).width;
+          }
+        }
+        ctx.globalAlpha = 1.0;
+        requestAnimationFrame(drawSeqOutput);
+      }
+      requestAnimationFrame(drawSeqOutput);
+    }
+    </script>
+
+    <script>
+    // Rotating hero headline with fade-in from down
+    const heroSentences = [
+      'Analyze NGS data in seconds.',
+      'Visualize your results instantly.',
+      'Seamless barcode evaluation.',
+      'Offline desktop & web tools.',
+      'Trusted by researchers worldwide.',
+      'Fast, modern, and user-friendly.',
+      'Powerful enrichment calculations.',
+      'Quality control made simple.',
+      'Supports large datasets easily,'
+    ];
+    let heroIdx = 0;
+    const heroHeadline = document.getElementById('hero-headline');
+    function rotateHeroHeadline() {
+      heroIdx = (heroIdx + 1) % heroSentences.length;
+      heroHeadline.classList.add('hide');
+      setTimeout(() => {
+        heroHeadline.textContent = heroSentences[heroIdx];
+        heroHeadline.classList.remove('hide');
+      }, 400);
+      setTimeout(rotateHeroHeadline, 5000);
+    }
+    setTimeout(rotateHeroHeadline, 5000);
+    </script>
+
+    <style>
+    .scroll-layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-direction: row;
+    }
+    .scroll-sections {
+      flex: 0 0 380px; /* fixed width, does not grow or shrink */
+      max-width: 380px;
+      min-width: 320px;
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+    }
+    .scroll-section {
+      min-height: 60vh;
+      padding: 2rem 0;
+      background: #fff;
+      margin-bottom: 1rem;
+      transition: box-shadow 0.2s;
+      display: flex;
+      align-items: flex-start;
+    }
+    .scroll-section:target, .scroll-section.active {
+      
+    }
+    .section-content {
+      width: 100%;
+      max-width: 320px;
+      margin-left: 80px;
+    }
+    .section-content h3 {
+      font-size: 2rem;
+      margin-bottom: 0.7rem;
+    }
+    .section-content p, .section-content .code-block {
+      font-size: 1.18rem;
+      color: #334155;
+    }
+    .sticky-image {
+      position: sticky;
+      top: 120px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border-radius: 1.5rem;
+      box-shadow: 0 2px 16px 0 rgba(0,0,0,0.07);
+      margin-left: 150px;
+      overflow: hidden;
+      /* Removed max-width and max-height to allow video to control size */
+      min-width: 200px;
+      min-height: 200px;
+      transition: width 0.3s, height 0.3s;
+    }
+    .sticky-image img,
+    .sticky-image video {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      margin: 0 auto;
+    }
+    #section-video-seq {
+      width: 520px;
+      height: 520px;
+      transform: rotate(45deg);
+    }
+    #section-video-dataviz {
+      display: block;
+      width: 1200px;
+      height: auto;
+      max-width: 100vw;
+      max-height: 95vh;
+      object-fit: contain;
+      margin-left: 0;
+      margin-right: auto;
+      border: 2px solid #000;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .sticky-image img {
+      max-width: 95%;
+      max-height: 95%;
+      transition: opacity 0.3s;
+      border-radius: 1rem;
+      box-shadow: 0 1px 8px 0 rgba(0,0,0,0.06);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .stat-card {
+      background: #f1f5f9;
+      border-radius: 1rem;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 1px 6px 0 rgba(0,0,0,0.04);
+    }
+    .stat-card .value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .stat-card .label {
+      font-size: 1.1rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+    /* Add styles for the new full-width quick start and stats sections */
+    .quick-start-section {
+      max-width: 700px;
+      margin: 4rem auto 2rem auto;
+      background: #fff;
+      border-radius: 1.2rem;
+      box-shadow: 0 1px 8px 0 rgba(0,0,0,0.04);
+      padding: 2.5rem 2rem 2rem 2rem;
+      text-align: left;
+    }
+    .quick-start-section h3 {
+      font-size: 2rem;
+      margin-bottom: 0.7rem;
+    }
+    .quick-start-section p, .quick-start-section .code-block {
+      font-size: 1.18rem;
+      color: #334155;
+    }
+    .stats-section {
+      max-width: 900px;
+      margin: 2rem auto 4rem auto;
+      background: #fff;
+      border-radius: 1.2rem;
+      box-shadow: 0 1px 8px 0 rgba(0,0,0,0.04);
+      padding: 2.5rem 2rem 2rem 2rem;
+    }
+    .sticky-image.video-flush {
+      display: flex !important;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      box-shadow: 0 1px 8px 0 rgba(0,0,0,0.04) !important;
+      border: 2px solid #000 !important;
+      background: transparent !important;
+      border-radius: 10px !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      min-width: unset !important;
+      max-width: unset !important;
+      align-self: flex-start !important;
+      margin-left: 50px !important;
+      z-index: 1;
+    }
+    .scroll-sections {
+      position: relative;
+      z-index: 2;
+    }
+    #section-video-dataviz {
+      display: block;
+      width: 750px;
+      height: auto;
+      max-width: 100vw;
+      max-height: 80vh;
+      object-fit: contain;
+      margin: 0;
+      border: 2px solid #000;   /* <-- black border directly on the video */
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .sticky-image.video-flush #section-image[src$="capgenie_3.png"] {
+      width: 720px;
+      max-width: 80vw;
+      max-height: 60vh;
+    }
+    .sticky-image.video-flush #section-image {
+      display: block;
+      width: 1200px;
+      height: auto;
+      max-width: 100vw;
+      max-height: 95vh;
+      object-fit: contain;
+      margin-left: 0;
+      margin-right: auto;
+      border: 2px solid #000;
+      border-radius: 10px;
+      box-shadow: none;
+      background: transparent;
+    }
+    @media (max-width: 900px) {
+      .scroll-layout {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .sticky-image {
+        position: static;
+        width: 100%;
+        height: auto;
+        margin-left: 0;
+        margin-bottom: 1.5rem;
+        max-width: 100vw;
+        max-height: 60vw;
+      }
+      .scroll-sections {
+        max-width: 100%;
+      }
+    }
+    </style>
+
+    <script>
+    // Sticky image scroll logic
+    document.addEventListener('DOMContentLoaded', function() {
+      const sections = document.querySelectorAll('.scroll-section');
+      const image = document.getElementById('section-image');
+      const videoSeq = document.getElementById('section-video-seq');
+      const videoDataViz = document.getElementById('section-video-dataviz');
+      const stickyContainer = document.querySelector('.sticky-image');
+      let lastImg = '';
+      function onScroll() {
+        let current = sections[0];
+        for (const section of sections) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top < window.innerHeight / 2) {
+            current = section;
+          }
+        }
+        const imgSrc = current.getAttribute('data-image');
+        // Sequence Analysis section: show looped_dna.webm
+        if (imgSrc === 'seq_analysis.png') {
+          stickyContainer.classList.remove('video-flush');
+          image.style.display = 'none';
+          videoDataViz.style.display = 'none';
+          videoDataViz.pause();
+          videoSeq.style.display = 'block';
+          videoSeq.style.opacity = 1;
+          videoSeq.play();
+        }
+        // Data Visualization section: show ex_capgenie_vid
+        else if (imgSrc === 'data_viz.png') {
+          stickyContainer.classList.add('video-flush');
+          image.style.display = 'none';
+          videoSeq.style.display = 'none';
+          videoSeq.pause();
+          videoDataViz.style.display = 'block';
+          videoDataViz.style.opacity = 1;
+          videoDataViz.play();
+        }
+        // Research Tools section: show capgenie_3.png
+        else if (imgSrc === 'capgenie_3.png') {
+          stickyContainer.classList.add('video-flush');
+          image.style.display = 'none';
+          videoSeq.style.display = 'none';
+          videoSeq.pause();
+          videoDataViz.style.display = 'none';
+          videoDataViz.pause();
+          image.style.display = 'block';
+          image.style.opacity = 1;
+          if (lastImg !== imgSrc) {
+            image.style.opacity = 0;
+            setTimeout(() => {
+              image.src = '/static/capgenie_3.png';
+              image.style.opacity = 1;
+            }, 200);
+            lastImg = imgSrc;
+          }
+        }
+        // Other sections: show image
+        else {
+          stickyContainer.classList.remove('video-flush');
+          videoSeq.style.display = 'none';
+          videoSeq.pause();
+          videoDataViz.style.display = 'none';
+          videoDataViz.pause();
+          image.style.display = 'block';
+          image.style.opacity = 1;
+          if (lastImg !== imgSrc) {
+            image.style.opacity = 0;
+            setTimeout(() => {
+              image.src = `/static/imgs/${imgSrc}`;
+              image.style.opacity = 1;
+            }, 200);
+            lastImg = imgSrc;
+          }
+        }
+        // Optional: highlight active section
+        sections.forEach(s => s.classList.remove('active'));
+        current.classList.add('active');
+      }
+      window.addEventListener('scroll', onScroll);
+      onScroll();
+    });
+    </script>
+</body>
+</html> 

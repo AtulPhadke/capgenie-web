@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CapGenie Dataset Viewer</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/view_dataset.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="/static/imgs/lamp.png" alt="CapGenie Logo">
+        <h1>CapGenie</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        
+        <a href="{{ url_for('new_dataset') }}">New Dataset</a>
+        <a href="{{ url_for('view_datasets') }}">View Previous Datasets</a>
+        <a href="{{ url_for('documentation') }}">Documentation</a>
+        <a href="{{ url_for('download') }}">Download</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+      </nav>
+    </div>
+  </header>
+  <!-- Main Content Grid -->
+  <main class="main-content" style="display: flex; flex-direction: column; width: 100%; align-items: flex-start; background: none; padding: 0 30px 30px 30px;">
+    <h2 id="dataset-title" class="dataset-title" style="margin-left: 0; align-self: flex-start;">{{ dataset_title }}</h2>
+    <script>console.log('dataset_title:', '{{ dataset_title }}');</script>
+    {% if source is defined %}
+      <script>
+        window.dataset_id = "{{ dataset_id }}";
+        window.source = "{{ source }}";
+      </script>
+    {% else %}
+      <script>
+        window.dataset_id = "{{ dataset_id }}";
+        window.source = null;
+      </script>
+    {% endif %}
+
+    <script>
+      // Securely cleanup all dataset files when user exits (for security)
+      let cleanupTriggered = false;
+      
+      function secureCleanupDataset() {
+        if (cleanupTriggered) return;
+        cleanupTriggered = true;
+        
+        // Clean up ALL datasets (web and cache) for security
+        const cleanup = fetch(`/api/cleanup_dataset/${window.dataset_id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          keepalive: true  // Ensure request completes even if page is closing
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Dataset and all related files cleaned up securely');
+          } else {
+            console.error('Failed to cleanup dataset:', data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error during cleanup:', error);
+        });
+        
+        return cleanup;
+      }
+      
+      // Trigger cleanup when user leaves the page
+      window.addEventListener('beforeunload', (e) => {
+        secureCleanupDataset();
+        // Small delay to ensure cleanup request is sent
+        e.returnValue = '';
+      });
+      
+      window.addEventListener('pagehide', secureCleanupDataset);
+      
+      // Also cleanup when user navigates away using browser back/forward
+      window.addEventListener('popstate', secureCleanupDataset);
+      
+      // Cleanup when user clicks on navigation links
+      document.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A' && e.target.href && 
+            !e.target.href.includes(window.dataset_id)) {
+          secureCleanupDataset();
+        }
+      });
+      
+      // Additional cleanup for browser close/tab close
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+          secureCleanupDataset();
+        }
+      });
+      
+      // Cleanup on page unload as final safeguard
+      window.addEventListener('unload', secureCleanupDataset);
+    </script>
+
+    <div class="main-nav" style="margin-left: 0; align-self: flex-start;">
+      <div id="quality_values_btn" class="label-with-icon{% if not sections.quality %} strike{% endif %}{% if sections.quality %} active{% endif %}" {% if not sections.quality %}disabled{% endif %}>
+        <img src="/static/imgs/music.png" class="label-icon">
+        <span>Quality analysis</span>
+      </div>
+      <div id="enrichment_values_btn" class="label-with-icon{% if not sections.enrichment %} strike{% endif %}{% if sections.enrichment %} active{% endif %}" {% if not sections.enrichment %}disabled{% endif %}>
+        <img src="/static/imgs/enrichment.png" class="label-icon">
+        <span>Enrichment values</span>
+      </div>
+      <div id="percentage_values_btn" class="label-with-icon{% if not sections.percentage %} strike{% endif %}{% if sections.percentage %} active{% endif %}" {% if not sections.percentage %}disabled{% endif %}>
+        <span>% Percentage values</span>
+      </div>
+      <div id="motif_values_btn" class="label-with-icon{% if not sections.motif %} strike{% endif %}{% if sections.motif %} active{% endif %}" {% if not sections.motif %}disabled{% endif %}>
+        <img src="/static/imgs/helix.png" class="label-icon">
+        <span>Motif analysis</span>
+      </div>
+    </div>
+    <div style="width: 100%; display: grid; grid-template-areas: 'stat1 stat2 chart1' 'spreadCard spreadCard bubbleCard'; grid-template-columns: 1.1fr 1.1fr 1.2fr; grid-template-rows: 180px 1fr; grid-gap: 32px 32px; align-items: stretch;">
+      <div class="card stat1" style="grid-area: stat1; min-height: 180px;">
+        <h3 id="MaxTitle">Highest value</h3>
+        <div id="max" class="large-value"></div>
+      </div>
+      <div class="card stat2" style="grid-area: stat2; min-height: 180px;">
+        <h3 id="MaxPeptide">Most common peptide:</h3>
+        <div id="top_peptide" class="large-value" style="letter-spacing: 2px;"></div>
+      </div>
+      <div class="card chart1" style="grid-area: chart1; cursor: pointer; min-height: 280px; max-height: 250px;">
+        <h3>Frequency Distribution</h3>
+        <canvas id="bio-chart" class="biodistribution-chart" height="280"></canvas>
+      </div>
+      <div id="spreadCard" class="card table" style="grid-area: spreadCard; min-height: 350px; max-height: 350px; align-self: stretch;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; margin-left: 18px;">
+          <h3 id="spread-title" style="margin: 0;">Peptide List</h3>
+          <select id="file-picker" style="max-width: 180px; min-width: 80px; height: 28px; font-size: 1em; padding: 2px 8px;"></select>
+        </div>
+        <table id="data">
+          <thead id="header">
+            <tr id="headerRow"></tr>
+          </thead>
+          <tbody id="spreadData">
+            <tr></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="chartCard" class="card table" style="display: none; grid-area: spreadCard; min-height: 350px; max-height: 350px; align-self: stretch; overflow-x: auto;">
+        <h3 id="fileChartTitle" style="margin-top: 0px;">Quality Analysis</h3>
+        <div id="chartContent" style="margin-top: 10px; width: 100%; height: 100%; overflow-y: hidden;">
+          <canvas id="fileChart" style="min-width: 100px; min-height: 250px;" height="100%"></canvas>
+        </div>
+      </div>
+      <div id="logoCard" class="card" style="display: none; grid-area: spreadCard; align-items: center; justify-content: center; min-height: 350px; max-height: 350px; align-self: stretch;">
+        <h3 id="spread-title" style="margin-top: 0px;">Motif Logo</h3>
+        <img id="motifLogo" style="width: 100%; max-height: 320px; object-fit: contain;">
+      </div>
+      <div id="bubbleCard" class="card chart2" style="grid-area: bubbleCard; cursor: pointer; min-height: 250px; max-height: 250px; align-self: end;">
+        <h3>Bubble</h3>
+        <canvas id="bubble-chart" class="bubble-chart" height="200" width="150"></canvas>
+      </div>
+      <div id="motifListCard" class="card chart2" style="display: none; grid-area: bubbleCard; align-items: stretch; justify-content: center; min-height: 250px; max-height: 250px; align-self: end;">
+        <div id="motifCardHeader">
+          <h3>List of Motifs</h3>
+          <input type="text" id="motif_search" placeholder="Type...">
+        </div>
+        <div style="width: 100%; max-height: 180px; overflow-y: auto;">
+          <table id="motifListTable" style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+            <thead id="motifHeader" style="position: sticky; top: 0; background: #f5f5f5; z-index: 2;">
+              <tr>
+                <th style="width: 50%; text-align: center; padding: 10px; border: 1px solid #ddd;">Motif</th>
+                <th style="width: 50%; text-align: center; padding: 10px; border: 1px solid #ddd;">Count</th>
+              </tr>
+            </thead>
+            <tbody id="motifBody">
+              <tr></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="overallChartCard" class="card chart2" style="display: none; grid-area: bubbleCard; min-height: 250px; max-height: 250px; align-self: end; position: relative;">
+        <h3>Overall quality</h3>
+        <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 1em; color: #333; font-weight: bold;" id="overallLeftLabel"></div>
+        <div style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 1em; color: #333; font-weight: bold;" id="overallRightLabel"></div>
+        <canvas id="overallChart" style="margin-top: 10px; width: 100%; height: 100%; min-height: 200px;" height="100%" width="100%"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <div id="freqModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Frequency Distribution</h2>
+      <canvas id="freq-chart-modal" class="freq-chart-modal"></canvas>
+    </div>
+  </div>
+  <div id="bubbleModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Bubble Chart</h2>
+      <canvas id="bubble-chart-modal" class="bubble-chart-modal"></canvas>
+    </div>
+  </div>
+  <div id="spreadModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Data Spreadsheet</h2>
+      <div class="modal-body">
+        <div id="spread-content-modal" class="spread-content-modal"></div>
+      </div>
+    </div>
+  </div>
+  <div id="motifListModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>List of Motifs</h2>
+      <div id="motif-content-modal" class="motif-content-modal"></div>
+    </div>
+  </div>
+  <div id="motifLogoModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Motif Logo</h2>
+      <img id="motif-logo-modal" class="motif-logo-modal">
+    </div>
+  </div>
+
+  <script src="/static/js/color.js"></script>
+  <script src="/static/js/view_dataset.js"></script>
+</body>
+</html> 

@@ -1,0 +1,120 @@
+/* Leftbar CSS - copied from gui/css/leftbar.css */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(180deg, #2C3E50 0%, #34495E 100%);
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+#logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+#title {
+  font-family: Poppins-Bold;
+  font-size: 24px;
+  margin: 0;
+  margin-right: 10px;
+}
+
+#logo_img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+#smoke {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  opacity: 0.7;
+}
+
+.line {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+.dataset-list {
+  margin-bottom: 20px;
+}
+
+.dataset-list strong {
+  font-family: Poppins-Medium;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.new-dataset-btn {
+  width: 100%;
+  padding: 12px;
+  background: #3498DB;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: Poppins-Medium;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.new-dataset-btn:hover {
+  background: #2980B9;
+}
+
+.footer-icons {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.icon:hover {
+  opacity: 1;
+}
+
+#search_bar {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: white;
+  font-family: Poppins-Regular;
+  font-size: 12px;
+}
+
+#search_bar::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 40px;
+  min-height: 100vh;
+  background: #F8F9FA;
+  box-sizing: border-box;
+} 

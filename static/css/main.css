@@ -1,0 +1,943 @@
+/* Genentech-inspired CapGenie Web App Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+    font-weight: 400;
+}
+
+/* DNA Background Animation for Home Page */
+.dna-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    opacity: 0.03;
+}
+
+.dna-helix {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, #1a1a1a 1px, transparent 1px),
+        radial-gradient(circle at 80% 50%, #1a1a1a 1px, transparent 1px);
+    background-size: 100px 200px, 100px 200px;
+    animation: dnaFloat 20s linear infinite;
+}
+
+.dna-helix:nth-child(2) {
+    animation-delay: -10s;
+    opacity: 0.5;
+}
+
+.dna-helix:nth-child(3) {
+    animation-delay: -5s;
+    opacity: 0.3;
+}
+
+@keyframes dnaFloat {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-50px) rotate(180deg);
+    }
+    100% {
+        transform: translateY(0) rotate(360deg);
+    }
+}
+
+/* Indie-Themed Animated Blob Background for Home Page */
+.indie-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.indie-blob {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.25;
+    filter: blur(8px);
+    animation: indieBlobMove 18s ease-in-out infinite alternate;
+}
+
+.indie-blob1 {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle at 30% 30%, #ffb6b9 0%, #fae3d9 100%);
+    top: -120px;
+    left: -120px;
+    animation-delay: 0s;
+}
+
+.indie-blob2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle at 70% 70%, #bbded6 0%, #8ac6d1 100%);
+    bottom: -100px;
+    right: -100px;
+    animation-delay: 4s;
+}
+
+.indie-blob3 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle at 50% 50%, #f5e6ca 0%, #f7d6e0 100%);
+    top: 60vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    animation-delay: 8s;
+}
+
+@keyframes indieBlobMove {
+    0%   { transform: scale(1) translateY(0) rotate(0deg); }
+    30%  { transform: scale(1.1, 0.9) translateY(-20px) rotate(10deg); }
+    60%  { transform: scale(0.95, 1.05) translateY(20px) rotate(-8deg); }
+    100% { transform: scale(1) translateY(0) rotate(0deg); }
+}
+
+/* DNA/Genomics Indie Animated Background for Home Page */
+.dna-indie-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.dna-helix-svg {
+    position: absolute;
+    opacity: 0.13;
+    animation: floatHelix 18s ease-in-out infinite alternate;
+}
+.dna-helix1 { left: 5vw; top: 10vh; width: 180px; height: 400px; animation-delay: 0s; }
+.dna-helix2 { right: 8vw; top: 30vh; width: 120px; height: 300px; animation-delay: 4s; }
+.dna-helix3 { left: 50vw; top: 60vh; width: 140px; height: 320px; animation-delay: 8s; }
+
+@keyframes floatHelix {
+    0%   { transform: translateY(0) scale(1) rotate(0deg); }
+    40%  { transform: translateY(-30px) scale(1.05) rotate(2deg); }
+    60%  { transform: translateY(20px) scale(0.97) rotate(-2deg); }
+    100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.dna-nucleotide {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.18;
+    animation: floatNucleotide 12s ease-in-out infinite alternate;
+}
+.dna-nucleotide.a { background: #a3cef1; width: 32px; height: 32px; left: 20vw; top: 80vh; animation-delay: 2s; }
+.dna-nucleotide.t { background: #f9dcc4; width: 24px; height: 24px; left: 70vw; top: 20vh; animation-delay: 5s; }
+.dna-nucleotide.c { background: #b6e2d3; width: 28px; height: 28px; left: 60vw; top: 75vh; animation-delay: 7s; }
+.dna-nucleotide.g { background: #f7b7a3; width: 20px; height: 20px; left: 80vw; top: 60vh; animation-delay: 9s; }
+
+@keyframes floatNucleotide {
+    0%   { transform: translateY(0) scale(1); }
+    50%  { transform: translateY(-40px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+/* Header */
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo img {
+    width: 45px;
+    height: 45px;
+}
+
+.logo h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #666666;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #1a1a1a;
+}
+
+.nav-links a.active {
+    color: #1a1a1a;
+}
+
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.2rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1a1a1a;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #ee5a52, #d63031);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(238, 90, 82, 0.3);
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    text-align: center;
+    padding: 6rem 0 4rem 0;
+    background: #fff;
+    margin-bottom: 4rem;
+    z-index: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero h2, .hero p {
+  text-shadow: 0 2px 12px rgba(0,0,0,0.10), 0 1px 2px rgba(110,193,228,0.10);
+}
+
+.seq-output-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.hero h2, .hero p, .hero .cta-button {
+    position: relative;
+    z-index: 1;
+}
+
+.hero h2 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    color: #666666;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
+}
+
+.cta-button {
+    display: inline-block;
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 1rem 2.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+/* Cards */
+.card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 4px 24px 0 rgba(110, 193, 228, 0.10), 0 1.5px 6px 0 rgba(0,0,0,0.04);
+}
+
+.card:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+}
+
+.card p {
+    color: #666666;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+
+
+/* Charts */
+.chart-container {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    transition: all 0.2s ease;
+}
+
+.chart-container:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.nav-tab {
+    background: transparent;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #666666;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+.nav-tab:hover {
+    color: #1a1a1a;
+}
+
+.nav-tab.active {
+    color: #1a1a1a;
+}
+
+.nav-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.2rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1a1a1a;
+}
+
+.nav-tab img {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+.nav-tab.active img {
+    opacity: 1;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+    background: #ffffff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+th, td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+th {
+    background: #f8f8f8;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+td {
+    color: #666666;
+}
+
+tr:hover {
+    background: #f8f8f8;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2.5rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.close {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666666;
+    transition: color 0.2s ease;
+}
+
+.close:hover {
+    color: #1a1a1a;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #1a1a1a;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #999999;
+}
+
+.btn {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.95rem;
+}
+
+.btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #666666;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background: #555555;
+}
+
+/* Loading Animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e5e5;
+    border-top: 3px solid #1a1a1a;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Progress Bars */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e5e5e5;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #1a1a1a;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
+/* Option Cards */
+.option-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.option-card:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.option-card.selected {
+    border-color: #1a1a1a;
+    background: #f8f8f8;
+}
+
+.option-card h4 {
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.option-card p {
+    color: #666666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.option-card img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+/* File Input Styling */
+.file-label {
+    display: inline-block;
+    background: #f8f8f8;
+    border: 2px dashed #e5e5e5;
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    color: #666666;
+}
+
+.file-label:hover {
+    border-color: #1a1a1a;
+    background: #f0f0f0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+    
+    .hero h2 {
+        font-size: 2.5rem;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-tabs {
+        justify-content: center;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .main-content {
+        padding: 0 1rem;
+    }
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Code-like elements */
+.code-block {
+    background: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: #1a1a1a;
+    overflow-x: auto;
+}
+
+/* Status indicators */
+.status-success {
+    color: #28a745;
+}
+
+.status-warning {
+    color: #ffc107;
+}
+
+.status-error {
+    color: #dc3545;
+}
+
+/* Footer */
+.footer {
+    background: #f8f8f8;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 4rem;
+    color: #666666;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    gap: 2rem;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.footer-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #666;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.social-link:hover {
+    color: var(--accent-sky);
+}
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.institutional-logos {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.inst-logo {
+    height: 40px;
+    width: auto;
+    max-width: 150px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.inst-logo:hover {
+    opacity: 1;
+}
+
+.footer-bottom {
+    border-top: 1px solid #e5e5e5;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    background: #f0f0f0;
+}
+
+.footer-bottom p {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
+
+/* Responsive footer */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .footer-section {
+        min-width: auto;
+    }
+    
+    .social-links {
+        align-items: center;
+    }
+    
+    .institutional-logos {
+        align-items: center;
+    }
+} 
+
+/* Remove DNA helix animation background */
+.dna-wave-bg { display: none !important; }
+
+.main-content {
+    position: relative;
+    z-index: auto;
+}
+
+.card {
+  position: relative;
+  z-index: 3;
+}
+
+/* Sky blue accent color */
+:root {
+    --accent-sky: #6ec1e4;
+    --accent-sky-light: #eaf6fb;
+}
+
+/* Hero Section with subtle gradient */
+.hero {
+    position: relative;
+    text-align: center;
+    padding: 6rem 0 4rem 0;
+    background: #fff;
+    margin-bottom: 4rem;
+    z-index: 1;
+}
+
+/* Remove JetBrains-style hero pop bar */
+.hero-pop-bar { display: none !important; }
+
+/* Accent underline for section headings */
+.card h3, .hero h2, .main-content h2 {
+    position: relative;
+}
+
+/* Remove sky blue accent underlines from section headings */
+.card h3::after, .hero h2::after, .main-content h2::after { display: none !important; }
+
+/* Button accent */
+.btn, .cta-button {
+    background: var(--accent-sky);
+    color: #fff;
+    border: none;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn:hover, .cta-button:hover {
+    background: #4ea3c7;
+    box-shadow: 0 4px 16px rgba(110, 193, 228, 0.18);
+}
+
+/* Nav link accent on hover/active */
+.nav-links a.active, .nav-links a:hover {
+    color: var(--accent-sky);
+}
+.nav-links a.active::after, .nav-links a:hover::after {
+    background: var(--accent-sky);
+    opacity: 1;
+}
+
+/* Card subtle shadow with sky blue tint */
+.card {
+    box-shadow: 0 4px 24px 0 rgba(110, 193, 228, 0.10), 0 1.5px 6px 0 rgba(0,0,0,0.04);
+    border: 1px solid #e5e5e5;
+}

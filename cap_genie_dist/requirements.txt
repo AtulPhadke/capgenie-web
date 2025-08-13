@@ -1,0 +1,15 @@
+pyahocorasick>=2.0.0
+biopython>=1.79
+plotly>=5.0.0
+kaleido>=0.2.1
+pandas>=1.5.0
+pybind11>=2.10.0
+inquirer>=2.7.0
+matplotlib>=3.5.0
+scikit-learn>=1.0.0
+umap-learn>=0.5.0
+logomaker>=0.8
+scipy>=1.7.0
+numpy>=1.21.0
+openpyxl>=3.0.0
+seaborn>=0.11.0

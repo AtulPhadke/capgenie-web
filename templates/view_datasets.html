@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Datasets - CapGenie</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    .upload-section {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin: 2rem 0;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-section.dragover {
+      border-color: #10b981;
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      transform: scale(1.02);
+    }
+
+    .folder-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+      position: relative;
+    }
+
+    .folder-icon::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .folder-icon:hover::after {
+      border-color: #3b82f6;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .folder-icon:hover {
+      transform: scale(1.05) rotate(8deg);
+      filter: drop-shadow(0 8px 16px rgba(59, 130, 246, 0.2));
+    }
+
+    .upload-section.dragover .folder-icon {
+      transform: scale(1.1);
+      filter: drop-shadow(0 12px 20px rgba(16, 185, 129, 0.3));
+    }
+
+    .upload-text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(96, 165, 250, 0.4);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+
+    .upload-progress {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .progress-text {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .upload-success {
+      display: none;
+      color: #10b981;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+
+    .upload-error {
+      display: none;
+      color: #ef4444;
+      font-weight: 500;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <img src="{{ url_for('static', filename='imgs/lamp.png') }}" alt="capgenie Logo" style="width:56px;height:56px;">
+        <h1>capgenie</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        
+        <a href="{{ url_for('new_dataset') }}">New Dataset</a>
+        <a href="{{ url_for('view_datasets') }}" class="active">View Previous Datasets</a>
+        <a href="{{ url_for('documentation') }}">Documentation</a>
+        <a href="{{ url_for('download') }}">Download</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout ({{ current_user.username }})</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <!-- Drag and Drop Upload Section -->
+    <div class="upload-section" id="uploadSection">
+      <img src="{{ url_for('static', filename='imgs/folder_icon.png') }}" alt="Folder Icon" class="folder-icon">
+      <div class="upload-text">Drag & Drop Dataset Folder Here</div>
+      <div class="upload-subtext">or click to browse and select a folder from your computer</div>
+      <input type="file" id="folderInput" class="file-input" webkitdirectory directory multiple>
+      <button class="upload-btn" onclick="document.getElementById('folderInput').click()">Choose Folder</button>
+      
+      <div class="upload-progress" id="uploadProgress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Uploading...</div>
+      </div>
+      
+      <div class="upload-success" id="uploadSuccess">Dataset uploaded successfully!</div>
+      <div class="upload-error" id="uploadError"></div>
+    </div>
+
+
+  </main>
+
+  <footer>
+    <p>&copy; 2024 CapGenie. Advanced DNA Analysis Platform.</p>
+  </footer>
+
+  <script>
+    const uploadSection = document.getElementById('uploadSection');
+    const folderInput = document.getElementById('folderInput');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const uploadSuccess = document.getElementById('uploadSuccess');
+    const uploadError = document.getElementById('uploadError');
+
+    // Drag and drop event listeners
+    uploadSection.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadSection.classList.add('dragover');
+    });
+
+    uploadSection.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadSection.classList.remove('dragover');
+    });
+
+    uploadSection.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadSection.classList.remove('dragover');
+      
+      const items = e.dataTransfer.items;
+      if (items) {
+        // Handle folder drop
+        handleFolderDrop(items);
+      }
+    });
+
+    // File input change event
+    folderInput.addEventListener('change', (e) => {
+      const files = e.target.files;
+      if (files.length > 0) {
+        handleFolderUpload(files);
+      }
+    });
+
+    function handleFolderDrop(items) {
+      const files = [];
+      
+      function processEntry(entry) {
+        if (entry.isFile) {
+          entry.file((file) => {
+            files.push(file);
+          });
+        } else if (entry.isDirectory) {
+          const reader = entry.createReader();
+          reader.readEntries((entries) => {
+            entries.forEach(processEntry);
+          });
+        }
+      }
+
+      for (let item of items) {
+        if (item.webkitGetAsEntry) {
+          const entry = item.webkitGetAsEntry();
+          if (entry) {
+            processEntry(entry);
+          }
+        }
+      }
+
+      // Wait a bit for all files to be processed
+      setTimeout(() => {
+        if (files.length > 0) {
+          uploadFiles(files);
+        }
+      }, 100);
+    }
+
+    function handleFolderUpload(files) {
+      uploadFiles(Array.from(files));
+    }
+
+    function uploadFiles(files) {
+      // Show progress
+      uploadProgress.style.display = 'block';
+      uploadSuccess.style.display = 'none';
+      uploadError.style.display = 'none';
+      
+      // Create FormData
+      const formData = new FormData();
+      
+      // Generate dataset name from folder name
+      const folderName = files[0].webkitRelativePath.split('/')[0];
+      formData.append('dataset_name', folderName);
+      
+      // Filter files to only include the required ones
+      const requiredFiles = files.filter(file => {
+        const path = file.webkitRelativePath;
+        const fileName = path.split('/').pop();
+        const folderName = path.split('/')[1]; // Second part after the main folder
+        
+        // Include instruction.json, motif_logo.png, motifs.json
+        if (fileName === 'instruction.json' || 
+            fileName === 'motif_logo.png' || 
+            fileName === 'motifs.json') {
+          return true;
+        }
+        
+        // Include everything in the spreadsheets folder
+        if (folderName === 'spreadsheets') {
+          return true;
+        }
+        
+        return false;
+      });
+      
+      // Add only the required files with their original paths
+      requiredFiles.forEach(file => {
+        // Preserve the original file path structure
+        formData.append('files', file, file.webkitRelativePath);
+      });
+
+      // Update progress text
+      progressText.textContent = `Uploading ${requiredFiles.length} files...`;
+      
+      // Upload files
+      fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success
+          uploadProgress.style.display = 'none';
+          uploadSuccess.style.display = 'block';
+          progressFill.style.width = '100%';
+          
+          // Route to the uploaded dataset after a short delay
+          setTimeout(() => {
+            window.location.href = `/view_dataset/web/${data.dataset_id}`;
+          }, 1500);
+        } else {
+          throw new Error(data.error || 'Upload failed');
+        }
+      })
+      .catch(error => {
+        // Show error
+        uploadProgress.style.display = 'none';
+        uploadError.style.display = 'block';
+        uploadError.textContent = error.message;
+        progressFill.style.width = '0%';
+      });
+    }
+
+    // Simulate progress for better UX
+    function updateProgress(percent) {
+      progressFill.style.width = percent + '%';
+      progressText.textContent = `Uploading... ${percent}%`;
+    }
+
+    // Add click handler for the upload section
+    uploadSection.addEventListener('click', (e) => {
+      // Only trigger if not already processing and not clicking on the button
+      if (uploadProgress.style.display !== 'block' && e.target.tagName !== 'BUTTON') {
+        folderInput.click();
+      }
+    });
+  </script>
+</body>
+</html> 
