@@ -83,3 +83,7 @@ cache/
 *.mp4
 *.avi
 *.mkv
+
+# Sensitive files
+capgenie-deploy_accessKeys.csv
+*.csv
