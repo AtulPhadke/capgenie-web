@@ -74,3 +74,5 @@ cache/
 # Temporary files
 *.tmp
 *.temp
+
+.elasticbeanstalk/app_versions/
